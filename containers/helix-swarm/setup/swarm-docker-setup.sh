@@ -1,12 +1,15 @@
 #!/bin/bash
+#
+# Configure Swarm in the docker environment. Will try to configure the connection to
+# P4D, and also install server side extensions on P4D if possible.
+#
 
 SWARM_HOME="/opt/perforce/swarm"
-SETUPDIR="/opt/perforce/setup"
 
 LOG="${SWARM_HOME}/data/docker.log"
 
 function log {
-    echo $(date +"%Y/%m/%d %H:%M:%S") - $@
+    echo "$(date +"%Y/%m/%d %H:%M:%S") - $*"
 }
 
 log "--"
@@ -14,7 +17,7 @@ log "Starting swarm-docker-setup.sh"
 
 
 function die {
-    log $@
+    log "$@"
     exit 1
 }
 
@@ -26,13 +29,13 @@ function waitForP4D {
     log "Checking P4D '${P4D_PORT}' to make sure it is running."
 
     local ATTEMPTS=0;
-    while [ ${ATTEMPTS} -lt ${P4D_GRACE:-30} ]
+    while [ "${ATTEMPTS}" -lt "${P4D_GRACE:-30}" ]
     do
-        if [[ ${P4D_PORT} =~ ssl:.* ]]
+        if [[ "${P4D_PORT}" =~ ssl:.* ]]
         then
-            p4 -p${P4D_PORT} trust -fy || log "Failed to trust SSL on '${P4D_PORT}'"
+            p4 -p"${P4D_PORT}" trust -fy || log "Failed to trust SSL on '${P4D_PORT}'"
         fi
-        if p4 -p ${P4D_PORT:-1666} -ztag info -s
+        if p4 -p "${P4D_PORT:-1666}" -ztag info -s
         then
             log "Contact!"
             return 0
@@ -79,14 +82,16 @@ function configureP4D {
     if [ $NEEDCONFIG -ne 0 ]
     then
         $P4D info | grep -q P4D/LINUX
+        # shellcheck disable=SC2181
         if [ $? -eq 0 ]
         then
             log "Configure ${P4D_PORT} to use Swarm extensions"
-            echo ${P4D_SUPER_PASSWD} | $P4D login
+            echo "${P4D_SUPER_PASSWD}" | $P4D login
             $P4D extension --yes --allow-unsigned --install ${SWARM_HOME}/p4-bin/helix-swarm.p4-extension
             
             $P4D extension --configure Perforce::helix-swarm -o > /tmp/global.txt
             sed -i "s#... SWARM-TOKEN#${SWARM_TOKEN}#g" /tmp/global.txt
+            # shellcheck disable=SC2153
             sed -i "s#/localhost/#/${SWARM_HOST}/#g" /tmp/global.txt
             sed -i "s#sampleExtensionsUser#${P4D_SUPER}#g" /tmp/global.txt
             $P4D extension --configure Perforce::helix-swarm -i < /tmp/global.txt
@@ -117,7 +122,7 @@ function configureSwarm {
     
     
     # Login to the server as the super user
-    echo ${P4D_SUPER_PASSWD} | $P4D login || die "Unable to login to '${P4D_PORT}' as user '${P4D_SUPER}' with '${P4D_SUPER_PASSWD}'"
+    echo "${P4D_SUPER_PASSWD}" | $P4D login || die "Unable to login to '${P4D_PORT}' as user '${P4D_SUPER}' with '${P4D_SUPER_PASSWD}'"
 
     log "Logged in"
 
@@ -132,6 +137,7 @@ function configureSwarm {
         -u "${SWARM_USER}" -w "${SWARM_PASSWD}" $CREATE -g \
         -H "${SWARM_HOST}" -e "${SWARM_MAILHOST}" >> $LOG
     
+    # shellcheck disable=SC2181
     if [ $? -ne 0 ]
     then
         log "configure-swarm.sh failed, using the following parameters:"
@@ -144,14 +150,14 @@ function configureSwarm {
     log "Successfully configured Swarm"
     
     # Get a ticket that stays valid if the container restarts
-    SWARM_TICKET=$(echo ${SWARM_PASSWD} | p4 -p ${P4D_PORT} -u ${SWARM_USER} login -ap | grep -v word)
-    sed -i "s/\('password' => '\)[0-9A-F]*/\1${SWARM_TICKET}/" ${SWARM_HOME}/data/config.php
+    SWARM_TICKET=$(echo "${SWARM_PASSWD}" | p4 -p "${P4D_PORT}" -u "${SWARM_USER}" login -ap | grep -v word)
+    sed -i "s/\('password' => '\)[0-9A-F]*/\1${SWARM_TICKET}/" "${SWARM_HOME}/data/config.php"
 
     # Create a new Swarm token
     mkdir -p ${SWARM_HOME}/data/queue/tokens
     mkdir -p ${SWARM_HOME}/data/queue/workers
     SWARM_TOKEN=$(uuid)
-    touch ${SWARM_HOME}/data/queue/tokens/${SWARM_TOKEN}
+    touch "${SWARM_HOME}/data/queue/tokens/${SWARM_TOKEN}"
     
     log "Generated a swarm token of ${SWARM_TOKEN}"
     
@@ -194,8 +200,8 @@ fi
 
 # Make sure that we have a copy of the configuration files.
 mkdir -p ${SWARM_HOME}/data/etc
-#cp /opt/perforce/etc/swarm-cron-hosts.conf ${SWARM_HOME)/data/etc
-#cp /etc/apache2/sites-available/perforce-swarm-site.conf ${SWARM_HOME)/data/etc
+cp /opt/perforce/etc/swarm-cron-hosts.conf ${SWARM_HOME}/data/etc
+cp /etc/apache2/sites-available/perforce-swarm-site.conf ${SWARM_HOME}/data/etc
 
 log "Swarm setup finished."
 

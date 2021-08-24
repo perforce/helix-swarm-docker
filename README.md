@@ -21,7 +21,7 @@ compatibility.
 
 There are two use cases that are supported, starting up Swarm against a clean
 P4D system (one which has not had Swarm configured against it), and starting
-Swarm using an existing configuration. These are described below.
+Swarm using an existing configuration. These are both described below.
 
 Note that the provided Makefile is for use on Linux, and may work on Mac.
 These images have not been tested on Windows.
@@ -91,8 +91,11 @@ then some parts of the configuration may need to be manually done.
 We recommend a Unicode enabled P4D for use with Swarm. If P4D is running on
 Microsoft Windows, then you will also need to configure the triggers.
 
-First configure the .env file to be suitable for your environment. Setup the
-following variables:
+First configure the .env file to be suitable for your environment. An 
+`env.dist` file is provided which has some defaults, which can be copied to
+`.env`, or you can manually create the file.
+
+The following variables are used from the environment:
 
 | Config           | Default           | Description              |
 | :---             | :---              | :---                     |
@@ -153,6 +156,11 @@ as Perl. They are not currently supported on Windows versions of P4D.
 
 If the SWARM_FORCE_EXT environment variable is set to "y", then any existing
 Swarm extensions will be removed, and new ones always installed.
+
+You can check to see what extensions are already installed by running the
+following command as a super user or admin:
+
+p4 extension --list --type extensions
 
 
 ### Managing the Container

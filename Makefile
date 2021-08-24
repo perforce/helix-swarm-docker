@@ -3,7 +3,7 @@
 	cp env.dist .env
 
 build: .env
-	cp Version containers/helix-swarm
+	cp -f Version containers/helix-swarm
 	docker-compose build
 	
 up: build

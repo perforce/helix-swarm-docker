@@ -11,7 +11,7 @@ ARG SWARM_VER
 ARG PKGV
 
 RUN \
-  [ $SWARM_VER != "latest" ] && PKGV="=${SWARM_VER}~focal"; \
+  [ ! -z $SWARM_VER ] && [ "$SWARM_VER" != "latest" ] && PKGV="=${SWARM_VER}~focal"; \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y -f helix-swarm$PKGV helix-swarm-optional$PKGV uuid
 
