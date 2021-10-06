@@ -87,7 +87,7 @@ function configureP4D {
         then
             log "Configure ${P4D_PORT} to use Swarm extensions"
             echo "${P4D_SUPER_PASSWD}" | $P4D login
-            $P4D extension --yes --allow-unsigned --install ${SWARM_HOME}/p4-bin/helix-swarm.p4-extension
+            $P4D extension --yes --install ${SWARM_HOME}/p4-bin/helix-swarm.p4-extension
             
             $P4D extension --configure Perforce::helix-swarm -o > /tmp/global.txt
             sed -i "s#... SWARM-TOKEN#${SWARM_TOKEN}#g" /tmp/global.txt
