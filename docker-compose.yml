@@ -5,14 +5,6 @@
 version: '2'
 
 services:
-  helix.base:
-    build:
-      context: containers/helix-base
-    image: perforce/helix-base-ubuntu20:latest
-    hostname: helix-base
-    domainname: helix
-    tty: false
-
   helix.swarm:
     build:
       #network: host
@@ -22,13 +14,13 @@ services:
     image: perforce/helix-swarm:${SWARM_VER:-latest}
     environment:
      - SWARM_USER=${SWARM_USER:-swarm}
-     - SWARM_PASSWD=${SWARM_PASSWD:-HelixDockerBay94}
+     - SWARM_PASSWD=${SWARM_PASSWD:-}
      - SWARM_MAILHOST=${SWARM_MAILHOST:-localhost}
      - SWARM_HOST=${SWARM_HOST:-helix.swarm}
      - SWARM_REDIS=${SWARM_REDIS:-redis}
      - SWARM_FORCE_EXT=${SWARM_FORCE_EXT:-n}
      - P4D_SUPER=${P4D_SUPER:-super}
-     - P4D_SUPER_PASSWD=${P4D_SUPER_PASSWD:-HelixDockerBay94}
+     - P4D_SUPER_PASSWD=${P4D_SUPER_PASSWD:-}
      - P4D_PORT=${P4D_PORT:-ssl:helix.p4d:1666}
     hostname: helix-swarm
     domainname: helix
