@@ -1,42 +1,56 @@
 
+REPO    := perforce
+IMAGE   := helix-swarm-development
+TAG     := DEV-BUILD
+ARGS    := 
+NAME    := helix-swarm
+
+-include build.mk
+	
+
 .env:
 	cp env.dist .env
 
 build: .env
-	cp -f Version containers/helix-swarm
-	docker-compose build
-	
-up: build
-	docker-compose up -d
+	docker build $(ARGS) --tag $(REPO)/$(IMAGE):$(TAG) --tag $(REPO)/$(IMAGE):latest .
 
-stop:
-	docker-compose stop
+build-clean: .env
+	docker build $(ARGS) --no-cache --tag $(REPO)/$(IMAGE):$(TAG) --tag $(REPO)/$(IMAGE):latest .
 
-down:
-	docker-compose down
+push: build
+	docker push $(REPO)/$(IMAGE):$(TAG)
+	docker push $(REPO)/$(IMAGE):latest
 	
+run: build
+	-docker network create helix
+	-docker run -d --name helix-redis --network helix --network-alias helix-redis \
+		redis redis-server --protected-mode no --port 7379
+
+	docker run -d --name helix-swarm --network helix --network-alias helix-swarm \
+		--env-file .env -p 80:80 $(REPO)/$(IMAGE):$(TAG)
+
 clean:
-	docker-compose rm -sf
-	sudo rm -fr ./storage/redis-data/*
-	sudo rm -fr ./storage/swarm-data
-	mkdir -p ./storage/swarm-data
+	-docker stop helix-swarm
+	-docker stop helix-redis
+	-docker rm -f helix-swarm
+	-docker rm -f helix-redis
 
 bash:
-	docker exec -it `docker ps | grep helix.swarm | cut -d " " -f 1` bash
+	docker exec -it `docker ps | grep $(NAME) | cut -d " " -f 1` bash
 
-push:
-	docker-compose push
 
-	
 log:
-	docker logs `docker ps | grep helix.swarm | cut -d " " -f 1`
+	docker logs `docker ps | grep $(NAME) | cut -d " " -f 1`
 
 
 tail:
-	docker logs -f `docker ps | grep helix.swarm | cut -d " " -f 1`
-	
-test:
-	docker-compose run helix.swarm sleep 900
+	docker logs -f `docker ps | grep $(NAME) | cut -d " " -f 1`
+
+swarm-log:
+	docker exec -it `docker ps | grep $(NAME) | cut -d " " -f 1` tail -f /opt/perforce/swarm/data/log
+
+swarm-config:
+	docker exec -it `docker ps | grep $(NAME) | cut -d " " -f 1` cat /opt/perforce/swarm/data/config.php
 
 
 #

@@ -1,6 +1,7 @@
 .p4config
 .p4ignore
 .env
+build.mk
 storage/
 containers/**/Version
 .directory
