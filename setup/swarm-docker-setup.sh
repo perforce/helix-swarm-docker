@@ -216,7 +216,7 @@ function configureApacheOnly {
 
     if [ ! -d "${DOCKER_DIR}/sites-available" ]
     then
-        mkdir -d "${DOCKER_DIR}/sites-available"
+        mkdir -p "${DOCKER_DIR}/sites-available"
         sed -e 's#APACHE_LOG_DIR#/var/log/apache2#' -e "s#REPLACE_WITH_SERVER_NAME#${SWARM_HOST}#" \
               /opt/perforce/etc/perforce-swarm-site.conf > "${DOCKER_DIR}/sites-available/perforce-swarm-site.conf"
     elif [ -f "${DOCKER_DIR}/sites-available" ]
