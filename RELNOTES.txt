@@ -1,7 +1,7 @@
                              Release Notes for
                      Helix Swarm Docker Configuration
 
-                              Version 1.0.0
+                              Version 1.0.1
 
 Introduction
 
@@ -41,6 +41,12 @@ License
 Important Notices
 
     This is the first production release.
+    
+
+--------------------------------------------------------------------------
+Patch 1.0.1 (2022/10/13)
+
+    * Bug fix for parameter to mkdir
 
 --------------------------------------------------------------------------
 Major new functionality in 1.0.0
