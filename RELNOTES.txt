@@ -40,31 +40,40 @@ License
 --------------------------------------------------------------------------
 Important Notices
 
-    This is the first production release.
-    
+    N/A
 
 --------------------------------------------------------------------------
-Patch 1.0.1 (2022/10/13)
+1.1.1 (2022/12/09)
+
+    * Clears the module cache when the container is started.
+
+--------------------------------------------------------------------------
+1.1.0 (2022/10/24)
+
+    * Now preserves the php.ini file.
+    
+--------------------------------------------------------------------------
+1.0.1 (2022/10/13)
 
     * Bug fix for parameter to mkdir
 
 --------------------------------------------------------------------------
-Major new functionality in 1.0.0
+1.0.0
 
     * First production ready release.
 
 --------------------------------------------------------------------------
-Major new functionality in 0.4.0
+0.4.0
 
     * Integrated into EC build environment.
     
 --------------------------------------------------------------------------
-Major new functionality in 0.2.0
+0.2.0
 
     * Removed dependency on docker-compose and helix base image.
 
 --------------------------------------------------------------------------
-Major new functionality in 0.1.0
+0.1.0
 
     * Added Docker support for Helix Swarm.
 

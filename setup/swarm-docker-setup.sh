@@ -238,6 +238,11 @@ mkdir -p ${DOCKER_DIR}
 # do not run first time configuration. Instead we try to preserve configuration files between runs.
 if  [ -f ${SWARM_HOME}/data/config.php ]
 then
+    if [ -d "${SWARM_HOME}/data/cache" ]
+    then
+        # Clear the module cache in case this is an upgrade
+        rm -f ${SWARM_HOME}/data/cache/*.php
+    fi
     if apachectl -S | grep -q "swarm"
     then
         log "Everything seems to be configured."
@@ -267,6 +272,14 @@ then
         mkdir -p "${DOCKER_DIR}/custom"
     fi
     ln -s "${DOCKER_DIR}/custom" "${CUSTOM_DIR}"
+    
+    if [ ! -f "${DOCKER_DIR}/php.ini" ]
+    then
+        mv "/etc/php/7.4/apache2/php.ini" "${DOCKER_DIR}/php.ini"
+    else
+        rm -f "/etc/php/7.4/apache2/php.ini"
+    fi
+    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/7.4/apache2/php.ini"
 else
     log "Configuring new instance of Swarm"
     configureSwarm
@@ -278,6 +291,8 @@ else
     ln -s "${DOCKER_DIR}/sites-available" "/etc/apache2/sites-available"
     mkdir -p "${DOCKER_DIR}/custom"
     ln -s "${DOCKER_DIR}/custom" "/opt/perforce/swarm/public/custom"
+    mv "/etc/php/7.4/apache2/php.ini" "${DOCKER_DIR}/php.ini"
+    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/7.4/apache2/php.ini"
 fi
 
 # If the data directory is externally mounted, ensure the version is easily accessible.
