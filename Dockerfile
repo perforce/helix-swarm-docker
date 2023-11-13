@@ -3,14 +3,14 @@
 # Swarm in a docker environment.                                            #
 # ========================================================================= #
 
-FROM ubuntu:focal AS helix-swarm
+FROM ubuntu:jammy AS helix-swarm
 LABEL vendor="Perforce Software"
 LABEL maintainer="Swarm Team (https://github.com/perforce/helix-swarm-docker)"
 
 # P4_PUBLIC_REPO should not be overridden
-ARG P4_PUBLIC_REPO="deb http://package.perforce.com/apt/ubuntu focal release"
+ARG P4_PUBLIC_REPO="deb http://package.perforce.com/apt/ubuntu jammy release"
 # P4REPO is designed to be overridden
-ARG P4REPO="deb http://package.perforce.com/apt/ubuntu focal release"
+ARG P4REPO="deb http://package.perforce.com/apt/ubuntu jammy release"
 ARG SWARM_VER
 ARG PKGV
 
@@ -31,7 +31,7 @@ RUN \
   echo "${P4REPO}\n" > /etc/apt/sources.list.d/perforce.list
 
 RUN \
-  [ ! -z $SWARM_VER ] && [ "$SWARM_VER" != "latest" ] && PKGV="=${SWARM_VER}~focal"; \
+  [ ! -z $SWARM_VER ] && [ "$SWARM_VER" != "latest" ] && PKGV="=${SWARM_VER}~jammy"; \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y -f helix-swarm$PKGV helix-swarm-optional$PKGV uuid
 
@@ -66,7 +66,5 @@ RUN echo http://localhost:80 > /opt/perforce/etc/swarm-cron-hosts.conf && \
 
 
 ENV P4DGRACE=$P4DGRACE
-
-
 
 CMD /opt/perforce/swarm/sbin/swarm-docker-setup.sh
