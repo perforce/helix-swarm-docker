@@ -26,7 +26,7 @@ https://hub.docker.com/repository/docker/perforce/helix-swarm
 The following tagged images are available:
 
 * perforce/helix-swarm:latest
-* perforce/helix-swarm:2022.2
+* perforce/helix-swarm:2023.2
 
 Versioned tags will be updated if there is a patch release for that version.
 The latest tag will always be the very latest patch for the latest version.
@@ -425,7 +425,7 @@ Tail the contents of the docker log file.
 
 ---
 
- @copyright   2022 Perforce Software. All rights reserved.
+ @copyright   2024 Perforce Software. All rights reserved.
 
 ---
  @license     Please see LICENSE in the top-level folder of this distribution.
