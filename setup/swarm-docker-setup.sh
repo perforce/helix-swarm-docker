@@ -275,11 +275,11 @@ then
     
     if [ ! -f "${DOCKER_DIR}/php.ini" ]
     then
-        mv "/etc/php/7.4/apache2/php.ini" "${DOCKER_DIR}/php.ini"
+        mv "/etc/php/8.1/apache2/php.ini" "${DOCKER_DIR}/php.ini"
     else
-        rm -f "/etc/php/7.4/apache2/php.ini"
+        rm -f "/etc/php/8.1/apache2/php.ini"
     fi
-    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/7.4/apache2/php.ini"
+    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/8.1/apache2/php.ini"
 else
     log "Configuring new instance of Swarm"
     configureSwarm
@@ -291,8 +291,8 @@ else
     ln -s "${DOCKER_DIR}/sites-available" "/etc/apache2/sites-available"
     mkdir -p "${DOCKER_DIR}/custom"
     ln -s "${DOCKER_DIR}/custom" "/opt/perforce/swarm/public/custom"
-    mv "/etc/php/7.4/apache2/php.ini" "${DOCKER_DIR}/php.ini"
-    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/7.4/apache2/php.ini"
+    mv "/etc/php/8.1/apache2/php.ini" "${DOCKER_DIR}/php.ini"
+    ln -fs "${DOCKER_DIR}/php.ini" "/etc/php/8.1/apache2/php.ini"
 fi
 
 # If the data directory is externally mounted, ensure the version is easily accessible.
